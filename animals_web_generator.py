@@ -17,7 +17,7 @@ def get_data_if_existent(animal_dict:dict) -> dict:
       if isinstance(animal_dict[key_name], str):
         result[key_name.capitalize()] = animal_dict[key_name]
       elif isinstance(animal_dict[key_name], list):
-        result[key_name.capitalize()[:-1]] = animal_dict[key_name][0]
+        result[key_name.capitalize()] = animal_dict[key_name][0]
     else:
       for key in animal_dict.keys():
         if key_name in animal_dict[key]:
@@ -50,36 +50,23 @@ def load_html_template(file_path) -> str:
 
 
 def generate_final_html(html_string: str) -> None:
-  """ Generates a final HTML file 'animals.html' """
+  """ Generates | overwrites final HTML file 'animals.html' """
   with open("animals.html", "w") as file:
     file.write(html_string)
 
 
 def serialize_animal(animal_object: dict) -> str:
   """ Serializes an animal object into a HTML string """
-  result_html_li = f"""
-            <li class=\"cards__item\">
-              <div class=\"card__title\">{animal_object[EXTRACT_KEYS[0].capitalize()]}</div>
-              <p class=\"card__text\">
-                <strong>{EXTRACT_KEYS[1].capitalize()}:</strong> 
-                {animal_object[EXTRACT_KEYS[1].capitalize()]}
-                <br>
-                <strong>{EXTRACT_KEYS[2].capitalize()[:-1]}:</strong> 
-                {animal_object[EXTRACT_KEYS[2].capitalize()[:-1]]}
-                <br>"""
-  if EXTRACT_KEYS[3].capitalize() in animal_object:
-    result_html_li += f"""
-                <strong>{EXTRACT_KEYS[3].capitalize()}:</strong> 
-                {animal_object[EXTRACT_KEYS[3].capitalize()]}
-                <br>"""
-  if EXTRACT_KEYS[4].capitalize() in animal_object:
-    result_html_li += f"""
-                <strong>{EXTRACT_KEYS[4].replace("scientific_name", "Scientific Name")}:</strong> 
-                {animal_object[EXTRACT_KEYS[4].capitalize()]}
-                <br>"""
-  result_html_li += f"""
-              </p>
-            </li>"""
+  result_html_li = f"<li class=\"cards__item\"><div class=\"card__title\">\
+    {animal_object[EXTRACT_KEYS[0].capitalize()]}</div><div class=\"card__text\"><ul class=\"card__list\">"
+  for key in EXTRACT_KEYS[1:]:
+    if key.capitalize() in animal_object:
+      if key.endswith('s'):
+        result_html_li += f"<li><strong>{key.capitalize()[:-1]}:</strong> {animal_object[key.capitalize()]}</li>"
+      else:
+        result_html_li += f"<li><strong>{key.capitalize()}:</strong> {animal_object[key.capitalize()]}</li>"
+
+  result_html_li += f"</ul></div></li>"
   return result_html_li
 
 
