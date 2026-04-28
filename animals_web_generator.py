@@ -72,12 +72,12 @@ def fill_template_with_data() -> str:
               <strong>{EXTRACT_KEYS[1].capitalize()}:</strong> 
               {animal[EXTRACT_KEYS[1].capitalize()]}
               <br>
-              <strong>{EXTRACT_KEYS[2].capitalize()[:-1]}</strong> 
+              <strong>{EXTRACT_KEYS[2].capitalize()[:-1]}:</strong> 
               {animal[EXTRACT_KEYS[2].capitalize()[:-1]]}
               <br>"""
     if EXTRACT_KEYS[3].capitalize() in animal:
       result_html_li += f"""
-              <strong>{EXTRACT_KEYS[3].capitalize()}</strong> 
+              <strong>{EXTRACT_KEYS[3].capitalize()}:</strong> 
               {animal[EXTRACT_KEYS[3].capitalize()]}
               <br>"""
     result_html_li += f"""
@@ -87,4 +87,4 @@ def fill_template_with_data() -> str:
   final_html = template_file.replace("__REPLACE_ANIMALS_INFO__", result_html_li.lstrip())
   return final_html
 
-fill_template_with_data()
+generate_final_html(fill_template_with_data())
