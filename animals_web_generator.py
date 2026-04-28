@@ -9,8 +9,6 @@ def load_data(file_path):
     return json.load(handle)
 
 
-animals_data = load_data('animals_data.json')
-
 def get_data_if_existent(animal_dict:dict) -> dict:
   """ Returns the animal data if it exists in animals_dict """
   result = dict()
@@ -19,7 +17,7 @@ def get_data_if_existent(animal_dict:dict) -> dict:
       if isinstance(animal_dict[key_name], str):
         result[key_name.capitalize()] = animal_dict[key_name]
       elif isinstance(animal_dict[key_name], list):
-        result["Location"] = animal_dict[key_name][0]
+        result[key_name.capitalize()[:-1]] = animal_dict[key_name][0]
     else:
       for key in animal_dict.keys():
         if key_name in animal_dict[key]:
@@ -27,10 +25,66 @@ def get_data_if_existent(animal_dict:dict) -> dict:
   return result
 
 
-list_of_animals_to_present = []
+def extract_animal_info_from_data() -> list:
+  """
+  Returns a list of animal info from the data
+  calls load_data()
+  calls get_data_if_existent()
+  """
+  animals_data = load_data('animals_data.json')
+  list_of_animals_to_present = []
 
-for animal in animals_data:
-  found_data = get_data_if_existent(animal)
-  for entry in found_data:
-    print(f"{entry}: {found_data[entry]}")
-  print()
+  for animal in animals_data:
+    found_data = get_data_if_existent(animal)
+    new_data = dict()
+    for entry in found_data:
+      new_data[entry] = found_data[entry]
+    list_of_animals_to_present.append(new_data)
+
+  return list_of_animals_to_present
+
+def load_html_template(file_path) -> str:
+  """ Loads a HTML template file """
+  with open(file_path, "r") as template_file:
+    return template_file.read()
+
+
+def generate_final_html(html_string: str) -> None:
+  """ Generates a final HTML file 'animals.html' """
+  with open("animals.html", "w") as file:
+    file.write(html_string)
+
+
+def fill_template_with_data() -> str:
+  """
+  Fills the HTML template with data
+  calls load_html_template()
+  calls extract_animal_info_from_data()
+  """
+  template_file = load_html_template('animals_template.html')
+  animal_data_list = extract_animal_info_from_data()
+  result_html_li = ""
+  for animal in animal_data_list:
+    result_html_li += f"""
+          <li class=\"cards__item\">
+            <div class=\"card__title\">{animal[EXTRACT_KEYS[0].capitalize()]}</div>
+            <p class=\"card__text\">
+              <strong>{EXTRACT_KEYS[1].capitalize()}:</strong> 
+              {animal[EXTRACT_KEYS[1].capitalize()]}
+              <br>
+              <strong>{EXTRACT_KEYS[2].capitalize()[:-1]}</strong> 
+              {animal[EXTRACT_KEYS[2].capitalize()[:-1]]}
+              <br>"""
+    if EXTRACT_KEYS[3].capitalize() in animal:
+      result_html_li += f"""
+              <strong>{EXTRACT_KEYS[3].capitalize()}</strong> 
+              {animal[EXTRACT_KEYS[3].capitalize()]}
+              <br>"""
+    result_html_li += f"""
+            </p>
+          </li>"""
+
+  final_html = template_file.replace("__REPLACE_ANIMALS_INFO__", result_html_li.lstrip())
+  return final_html
+
+fill_template_with_data()
