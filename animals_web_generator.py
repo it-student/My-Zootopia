@@ -1,7 +1,7 @@
 import json
 
 
-EXTRACT_KEYS = ["name", "diet", "locations", "type"]
+EXTRACT_KEYS = ["name", "diet", "locations", "type", 'scientific_name']
 
 def load_data(file_path):
   """ Loads a JSON file """
@@ -55,34 +55,46 @@ def generate_final_html(html_string: str) -> None:
     file.write(html_string)
 
 
+def serialize_animal(animal_object: dict) -> str:
+  """ Serializes an animal object into a HTML string """
+  result_html_li = f"""
+            <li class=\"cards__item\">
+              <div class=\"card__title\">{animal_object[EXTRACT_KEYS[0].capitalize()]}</div>
+              <p class=\"card__text\">
+                <strong>{EXTRACT_KEYS[1].capitalize()}:</strong> 
+                {animal_object[EXTRACT_KEYS[1].capitalize()]}
+                <br>
+                <strong>{EXTRACT_KEYS[2].capitalize()[:-1]}:</strong> 
+                {animal_object[EXTRACT_KEYS[2].capitalize()[:-1]]}
+                <br>"""
+  if EXTRACT_KEYS[3].capitalize() in animal_object:
+    result_html_li += f"""
+                <strong>{EXTRACT_KEYS[3].capitalize()}:</strong> 
+                {animal_object[EXTRACT_KEYS[3].capitalize()]}
+                <br>"""
+  if EXTRACT_KEYS[4].capitalize() in animal_object:
+    result_html_li += f"""
+                <strong>{EXTRACT_KEYS[4].replace("scientific_name", "Scientific Name")}:</strong> 
+                {animal_object[EXTRACT_KEYS[4].capitalize()]}
+                <br>"""
+  result_html_li += f"""
+              </p>
+            </li>"""
+  return result_html_li
+
+
 def fill_template_with_data() -> str:
   """
   Fills the HTML template with data
   calls load_html_template()
   calls extract_animal_info_from_data()
+  calls serialize_animal()
   """
   template_file = load_html_template('animals_template.html')
   animal_data_list = extract_animal_info_from_data()
   result_html_li = ""
   for animal in animal_data_list:
-    result_html_li += f"""
-          <li class=\"cards__item\">
-            <div class=\"card__title\">{animal[EXTRACT_KEYS[0].capitalize()]}</div>
-            <p class=\"card__text\">
-              <strong>{EXTRACT_KEYS[1].capitalize()}:</strong> 
-              {animal[EXTRACT_KEYS[1].capitalize()]}
-              <br>
-              <strong>{EXTRACT_KEYS[2].capitalize()[:-1]}:</strong> 
-              {animal[EXTRACT_KEYS[2].capitalize()[:-1]]}
-              <br>"""
-    if EXTRACT_KEYS[3].capitalize() in animal:
-      result_html_li += f"""
-              <strong>{EXTRACT_KEYS[3].capitalize()}:</strong> 
-              {animal[EXTRACT_KEYS[3].capitalize()]}
-              <br>"""
-    result_html_li += f"""
-            </p>
-          </li>"""
+    result_html_li += serialize_animal(animal)
 
   final_html = template_file.replace("__REPLACE_ANIMALS_INFO__", result_html_li.lstrip())
   return final_html
