@@ -1,7 +1,7 @@
 import json
 
 
-EXTRACT_KEYS = ["name", "diet", "locations", "type", 'scientific_name']
+EXTRACT_KEYS = ["name", "diet", "locations", "type", 'scientific_name', 'skin_type']
 
 def load_data(file_path):
   """ Loads a JSON file """
@@ -25,13 +25,12 @@ def get_data_if_existent(animal_dict:dict) -> dict:
   return result
 
 
-def extract_animal_info_from_data() -> list:
+def extract_animal_info_from_data(list_of_animal_dicts:list) -> list:
   """
   Returns a list of animal info from the data
-  calls load_data()
   calls get_data_if_existent()
   """
-  animals_data = load_data('animals_data.json')
+  animals_data = list_of_animal_dicts
   list_of_animals_to_present = []
 
   for animal in animals_data:
@@ -70,7 +69,7 @@ def serialize_animal(animal_object: dict) -> str:
   return result_html_li
 
 
-def fill_template_with_data() -> str:
+def fill_template_with_data(list_of_animal_dicts:list) -> str:
   """
   Fills the HTML template with data
   calls load_html_template()
@@ -78,7 +77,7 @@ def fill_template_with_data() -> str:
   calls serialize_animal()
   """
   template_file = load_html_template('animals_template.html')
-  animal_data_list = extract_animal_info_from_data()
+  animal_data_list = extract_animal_info_from_data(list_of_animal_dicts)
   result_html_li = ""
   for animal in animal_data_list:
     result_html_li += serialize_animal(animal)
@@ -86,4 +85,30 @@ def fill_template_with_data() -> str:
   final_html = template_file.replace("__REPLACE_ANIMALS_INFO__", result_html_li.lstrip())
   return final_html
 
-generate_final_html(fill_template_with_data())
+
+def get_skin_types(animal_dict: dict) -> list:
+  """ Returns a list of skin types """
+  skin_types = []
+  for animal in animal_dict:
+    if animal['characteristics']['skin_type'] not in skin_types:
+      skin_types.append(animal['characteristics']['skin_type'])
+  return skin_types
+
+
+def main():
+  animals_data = load_data('animals_data.json')
+  available_skin_types = get_skin_types(animals_data)
+  while True:
+    print("Please choose one of following skin types: ")
+    for skin_type in available_skin_types:
+      print(skin_type)
+    users_choice = input("Please type in which skin type you choose: ")
+    if users_choice in available_skin_types:
+      animals_with_that_skin_type = [animal for animal in animals_data if animal['characteristics']['skin_type'] == users_choice]
+      filled_template_html = fill_template_with_data(animals_with_that_skin_type)
+      generate_final_html(filled_template_html)
+      break
+
+
+if __name__ == '__main__':
+  main()
