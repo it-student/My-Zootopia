@@ -125,7 +125,7 @@ def main():
             continue
         filled_template_html = fill_template_with_data(animals_data)
         generate_final_html(filled_template_html)
-        print("HTML file successfully generated")
+        print("Website was successfully generated to the file animals.html.")
         break
 
 
