@@ -10,16 +10,15 @@ BASE_URL = "https://api.api-ninjas.com/v1/animals"
 KEY = "A3ZgTy43hrThZRH2n1wzvepT7IPhL4N9tW4MEsYD"
 EXTRACT_KEYS = ["name", "diet", "locations", "type", 'scientific_name', 'skin_type']
 
-def load_data(file_path = ''):
-    """ Loads a JSON file """
-    if file_path != '':
-        with open(file_path, "r", encoding='utf-8') as handle:
-            return json.load(handle)
-    else:
-        headers = {'X-Api-Key': KEY}
+def load_data(animal = ''):
+    """ Loads a JSON response from an API """
+    if animal == '':
         payload = {'name': 'Fox'}
-        response = requests.get(BASE_URL, headers=headers, params=payload)
-        return response.json()
+    else:
+        payload = {'name': animal}
+    headers = {'X-Api-Key': KEY}
+    response = requests.get(BASE_URL, headers=headers, params=payload)
+    return response.json()
 
 
 def get_data_if_existent(animal_dict:dict) -> dict:
@@ -66,6 +65,8 @@ def generate_final_html(html_string: str) -> None:
     """ Generates | overwrites final HTML file 'animals.html' """
     with open("animals.html", "w", encoding='utf-8') as file:
         file.write(html_string)
+
+    return None
 
 
 def serialize_animal(animal_object: dict) -> str:
@@ -116,19 +117,16 @@ def main():
     """
     Main function
     """
-    animals_data = load_data()
-    available_skin_types = get_skin_types(animals_data)
     while True:
-        print("Please choose one of following skin types: ")
-        for skin_type in available_skin_types:
-            print(skin_type)
-        users_choice = input("Please type in which skin type you choose: ")
-        if users_choice in available_skin_types:
-            animals_with_that_skin_type = [animal for animal in animals_data
-                                          if animal['characteristics']['skin_type'] == users_choice]
-            filled_template_html = fill_template_with_data(animals_with_that_skin_type)
-            generate_final_html(filled_template_html)
-            break
+        users_choice = input("Enter a name of an animal: ")
+        animals_data = load_data(users_choice)
+        if type(animals_data) != list:
+            print("Please enter a valid animal name")
+            continue
+        filled_template_html = fill_template_with_data(animals_data)
+        generate_final_html(filled_template_html)
+        print("HTML file successfully generated")
+        break
 
 
 if __name__ == '__main__':
