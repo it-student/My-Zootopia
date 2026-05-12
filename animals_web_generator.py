@@ -95,10 +95,13 @@ def fill_template_with_data(list_of_animal_dicts:list) -> str:
     calls serialize_animal()
     """
     template_file = load_html_template('animals_template.html')
-    animal_data_list = extract_animal_info_from_data(list_of_animal_dicts)
-    result_html_li = ""
-    for animal in animal_data_list:
-        result_html_li += serialize_animal(animal)
+    if type(list_of_animal_dicts) != list:
+        result_html_li = f"<h2>The animal \"{list_of_animal_dicts}\" doesn't exist!</h2>"
+    else:
+        animal_data_list = extract_animal_info_from_data(list_of_animal_dicts)
+        result_html_li = ""
+        for animal in animal_data_list:
+            result_html_li += serialize_animal(animal)
 
     final_html = template_file.replace("__REPLACE_ANIMALS_INFO__", result_html_li.lstrip())
     return final_html
@@ -120,10 +123,10 @@ def main():
     while True:
         users_choice = input("Enter a name of an animal: ")
         animals_data = load_data(users_choice)
-        if type(animals_data) != list:
-            print("Please enter a valid animal name")
-            continue
-        filled_template_html = fill_template_with_data(animals_data)
+        if len(animals_data) == 0:
+            filled_template_html = fill_template_with_data(users_choice)
+        else:
+            filled_template_html = fill_template_with_data(animals_data)
         generate_final_html(filled_template_html)
         print("Website was successfully generated to the file animals.html.")
         break
