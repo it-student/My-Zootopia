@@ -6,7 +6,7 @@ Feel free to consume, collaborate and contribute in your own will. :)
 
 ## Installation
 
-To install this project, simply clone the repository and install the dependencies in requirements.txt using `pip`
+To install this project, simply clone the repository and install the dependencies in requirements.txt using `pip install -r requirements.txt`
 
 ## Usage
 
