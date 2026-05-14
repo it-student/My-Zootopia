@@ -1,6 +1,9 @@
-# My Awesome Project
+# My Awesome Project at MSIT
 
-This project uses the api-ninjas animals API to fetch animals the user searches for.
+This project uses the api-ninjas animals API to fetch animal infos the user searches for.
+It's representing my very first project using git for version control linked to my very old github account.
+Feel free to consume, collaborate and contribute in your own will. :)
+
 ## Installation
 
 To install this project, simply clone the repository and install the dependencies in requirements.txt using `pip`
