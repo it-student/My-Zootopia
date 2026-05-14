@@ -1,5 +1,5 @@
 """
-This module fetches data from api-ninja's api and returns the json-responsegit
+This module fetches data from api-ninja's api and returns the json-response
 """
 import requests
 import os
@@ -11,12 +11,13 @@ BASE_URL = "https://api.api-ninjas.com/v1/animals"
 KEY = os.getenv('API_KEY')
 
 
+# noinspection PyTypeChecker
 def fetch_data(animal_name = ''):
     """ Loads a JSON response from an API """
-    if animal_name == '':
-        payload = {'name': 'Fox'}
-    else:
-        payload = {'name': animal_name}
+    payload = {'name': str(animal_name)}
     headers = {'X-Api-Key': KEY}
-    response = requests.get(BASE_URL, headers=headers, params=payload)
+    response = requests.get(BASE_URL,
+                            headers=headers,
+                            params=payload,
+                            timeout=10)
     return response.json()

@@ -1,6 +1,6 @@
 """
 This module uses the api-ninjas animals API to fetch animal data in
-json format in order to manipulate a plain html file by filling in
+JSON format in order to manipulate a plain HTML file by filling in
 the found animals data in form of card style chunks.
 uses data_fetcher module
 """
@@ -81,13 +81,16 @@ def fill_template_with_data(list_of_animal_dicts:list) -> str:
     calls serialize_animal()
     """
     template_file = load_html_template('animals_template.html')
-    if isinstance(list_of_animal_dicts, list):
-        result_html_li = f"<h2>The animal \"{list_of_animal_dicts}\" doesn't exist!</h2>"
+    if isinstance(list_of_animal_dicts, dict):  # If no animal name provided, the API responds with a dictionary
+        result_html_li = '<h2>No animal name given...The animal name must be given!</h2>'
     else:
-        animal_data_list = extract_animal_info_from_data(list_of_animal_dicts)
-        result_html_li = ""
-        for animal in animal_data_list:
-            result_html_li += serialize_animal(animal)
+        if isinstance(list_of_animal_dicts[0], dict):
+            animal_data_list = extract_animal_info_from_data(list_of_animal_dicts)
+            result_html_li = ""
+            for animal in animal_data_list:
+                result_html_li += serialize_animal(animal)
+        else:
+            result_html_li = f"<h2>The animal \"{list_of_animal_dicts[0]}\" doesn't exist!</h2>"
 
     final_html = template_file.replace("__REPLACE_ANIMALS_INFO__", result_html_li.lstrip())
     return final_html
@@ -110,7 +113,7 @@ def main():
         users_choice = input("Enter a name of an animal: ")
         animals_data = data_fetcher.fetch_data(users_choice)
         if len(animals_data) == 0:
-            filled_template_html = fill_template_with_data(users_choice)
+            filled_template_html = fill_template_with_data([users_choice])
         else:
             filled_template_html = fill_template_with_data(animals_data)
         generate_final_html(filled_template_html)
