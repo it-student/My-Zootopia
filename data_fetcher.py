@@ -1,5 +1,6 @@
 """
 This module fetches data from api-ninja's api and returns the json-response
+uses requests module
 """
 import requests
 import os
